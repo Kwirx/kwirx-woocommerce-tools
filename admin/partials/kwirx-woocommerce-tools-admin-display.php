@@ -6,7 +6,7 @@ if (!defined('WPINC')) {
 ?>
 
 <div class="wrap">
-    <h1>Kwirx WooCommerce Tools</h1>
+    <h1><?php echo esc_html__('Kwirx WooCommerce Tools', 'kwirx-woocommerce-tools'); ?></h1>
     <p>A comprehensive toolkit for WooCommerce store management, featuring tools for image duplicate removal, product dimension updates, and more.</p>
 
     <h2 class="nav-tab-wrapper">
@@ -20,13 +20,15 @@ if (!defined('WPINC')) {
 
 <script>
 jQuery(document).ready(function($) {
+    'use strict';
     // Tab functionality
     $('.nav-tab').on('click', function(e) {
         e.preventDefault();
+        var $this = $(this);
         $('.nav-tab').removeClass('nav-tab-active');
-        $(this).addClass('nav-tab-active');
+        $this.addClass('nav-tab-active');
         $('.tab-content').hide();
-        $($(this).attr('href')).show();
+        $($this.attr('href')).show();
     });
 });
 </script>

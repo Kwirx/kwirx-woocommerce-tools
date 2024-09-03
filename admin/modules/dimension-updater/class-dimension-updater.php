@@ -49,12 +49,12 @@ class Kwirx_Dimension_Updater {
                 // Check for and handle attributes with multiple values separated by "|", take the last value
                 $height = strpos($height, '|') !== false ? trim(end(explode('|', $height))) : $height;
                 $width  = strpos($width, '|')  !== false ? trim(end(explode('|', $width)))  : $width;
-                $length  = strpos($length, '|')  !== false ? trim(end(explode('|', $length)))  : $length;
+                $length = strpos($length, '|')  !== false ? trim(end(explode('|', $length)))  : $length;
 
                 if (!empty($height) && !empty($width) && !empty($length)) {
-                    $product->set_height($height);
-                    $product->set_width($width);
-                    $product->set_length($length);
+                    $product->set_height(wc_format_decimal($height));
+                    $product->set_width(wc_format_decimal($width));
+                    $product->set_length(wc_format_decimal($length));
                     $product->save();
                     $updated_count++;
                     $updated_products[] = array(
@@ -75,6 +75,8 @@ class Kwirx_Dimension_Updater {
                 "done" => $done,
             ]);
 
+        } catch (WP_Error $e) {
+            wp_send_json_error('WordPress error: ' . $e->get_error_message());
         } catch (Exception $e) {
             wp_send_json_error('An unexpected error occurred: ' . $e->getMessage());
         }

@@ -39,7 +39,8 @@ class Kwirx_WooCommerce_Tools_Admin {
         
         wp_localize_script($this->plugin_name, 'kwirx_ajax_object', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('kwirx_woocommerce_tools_nonce')
+            'remove_duplicate_images_nonce' => wp_create_nonce('kwirx_remove_duplicate_images'),
+            'update_product_dimensions_nonce' => wp_create_nonce('kwirx_update_product_dimensions')
         ));
     }
 
@@ -56,5 +57,20 @@ class Kwirx_WooCommerce_Tools_Admin {
 
     public function display_plugin_admin_page() {
         include_once KWIRX_TOOLS_PLUGIN_DIR . 'admin/partials/kwirx-woocommerce-tools-admin-display.php';
+    }
+
+    /**
+     * Log messages for debugging purposes.
+     *
+     * @param mixed $message The message to log.
+     */
+    public function log($message) {
+        if (WP_DEBUG === true) {
+            if (is_array($message) || is_object($message)) {
+                error_log(print_r($message, true));
+            } else {
+                error_log($message);
+            }
+        }
     }
 }

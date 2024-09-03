@@ -27,7 +27,7 @@ class Kwirx_Image_Duplicate_Remover {
             }
 
             $batch_size = 10;
-            $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
+            $offset = isset($_POST['offset']) ? absint($_POST['offset']) : 0;
 
             $args = array(
                 'post_type'      => 'product',
@@ -64,6 +64,8 @@ class Kwirx_Image_Duplicate_Remover {
                 'updated_products' => $updated_products
             ));
 
+        } catch (WP_Error $e) {
+            wp_send_json_error('WordPress error: ' . $e->get_error_message());
         } catch (Exception $e) {
             wp_send_json_error('An unexpected error occurred: ' . $e->getMessage());
         }

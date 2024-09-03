@@ -34,6 +34,7 @@ jQuery(document).ready(function($) {
     var isPaused = false;
     var totalProcessed = 0;
     var totalRemoved = 0;
+    var totalProducts = 0;
 
     $('#start-duplicate-removal').on('click', function() {
         if (confirm('Are you sure you want to remove duplicate images? This action cannot be undone.')) {
@@ -44,6 +45,7 @@ jQuery(document).ready(function($) {
             isPaused = false;
             totalProcessed = 0;
             totalRemoved = 0;
+            totalProducts = 0;
             $('#updated-products-list').empty();
             removeDuplicateImages(0);
         }
@@ -63,7 +65,7 @@ jQuery(document).ready(function($) {
             isPaused = false;
             $('#start-duplicate-removal').prop('disabled', false);
             $('#pause-duplicate-removal, #cancel-duplicate-removal').hide();
-            $('#progress-text').text('Process cancelled. Processed: ' + totalProcessed + ' products. Removed: ' + totalRemoved + ' duplicate images.');
+            $('#progress-text').text('Process cancelled. Processed: ' + totalProcessed + ' of ' + totalProducts + ' products. Removed: ' + totalRemoved + ' duplicate images.');
         }
     });
 
@@ -83,9 +85,10 @@ jQuery(document).ready(function($) {
                     var data = response.data;
                     totalProcessed += data.processed;
                     totalRemoved += data.total_removed;
-                    var progressPercentage = (totalProcessed / (totalProcessed + 100)) * 100; // Estimate total
+                    totalProducts = data.total_products;
+                    var progressPercentage = (totalProcessed / totalProducts) * 100;
                     $('#progress').css('width', progressPercentage + '%');
-                    $('#progress-text').text('Processed: ' + totalProcessed + ' products. Removed: ' + totalRemoved + ' duplicate images.');
+                    $('#progress-text').text('Processed: ' + totalProcessed + ' of ' + totalProducts + ' products. Removed: ' + totalRemoved + ' duplicate images.');
                     
                     // Update the list of products with removed duplicates
                     data.updated_products.forEach(function(product) {
@@ -96,7 +99,7 @@ jQuery(document).ready(function($) {
                         removeDuplicateImages(data.next_offset);
                     } else if (!data.more) {
                         isProcessing = false;
-                        $('#progress-text').text('Completed! Processed: ' + totalProcessed + ' products. Removed: ' + totalRemoved + ' duplicate images.');
+                        $('#progress-text').text('Completed! Processed: ' + totalProcessed + ' of ' + totalProducts + ' products. Removed: ' + totalRemoved + ' duplicate images.');
                         $('#start-duplicate-removal').prop('disabled', false);
                         $('#pause-duplicate-removal, #cancel-duplicate-removal').hide();
                     }

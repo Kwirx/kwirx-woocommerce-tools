@@ -29,6 +29,9 @@ class Kwirx_Image_Duplicate_Remover {
             $batch_size = 10;
             $offset = isset($_POST['offset']) ? absint($_POST['offset']) : 0;
 
+            // Calculate total number of products
+            $total_products = wp_count_posts('product')->publish;
+
             $args = array(
                 'post_type'      => 'product',
                 'posts_per_page' => $batch_size,
@@ -61,7 +64,8 @@ class Kwirx_Image_Duplicate_Remover {
                 'total_removed' => $total_removed,
                 'more'          => $more,
                 'next_offset'   => $offset + $processed,
-                'updated_products' => $updated_products
+                'updated_products' => $updated_products,
+                'total_products' => $total_products
             ));
 
         } catch (WP_Error $e) {

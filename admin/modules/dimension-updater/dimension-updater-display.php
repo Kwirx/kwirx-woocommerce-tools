@@ -63,7 +63,7 @@ jQuery(document).ready(function($) {
             isDimensionPaused = false;
             $('#start-dimension-update').prop('disabled', false);
             $('#pause-dimension-update, #cancel-dimension-update').hide();
-            $('#dimension-progress-text').text('Process cancelled. Processed: ' + totalDimensionProcessed + ' products. Updated: ' + totalDimensionUpdated + ' products.');
+            $('#dimension-progress-text').text('Process cancelled. Processed: ' + totalDimensionProcessed + ' of ' + totalDimensionProducts + ' products. Updated: ' + totalDimensionUpdated + ' products.');
         }
     });
 
@@ -82,7 +82,7 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     var data = response.data;
                     totalDimensionProcessed = data.processed;
-                    totalDimensionUpdated = data.updated;
+                    totalDimensionUpdated += data.updated;  // Accumulate the total updated count
                     totalDimensionProducts = data.total_products;
 
                     var progressPercentage = (totalDimensionProcessed / totalDimensionProducts) * 100;
@@ -98,7 +98,7 @@ jQuery(document).ready(function($) {
                         updateProductDimensions(batchNumber + 1);
                     } else if (data.done) {
                         isDimensionProcessing = false;
-                        $('#dimension-progress-text').text('Completed! Processed: ' + totalDimensionProcessed + ' products. Updated: ' + totalDimensionUpdated + ' products.');
+                        $('#dimension-progress-text').text('Completed! Processed: ' + totalDimensionProcessed + ' of ' + totalDimensionProducts + ' products. Updated: ' + totalDimensionUpdated + ' products.');
                         $('#start-dimension-update').prop('disabled', false);
                         $('#pause-dimension-update, #cancel-dimension-update').hide();
                     }

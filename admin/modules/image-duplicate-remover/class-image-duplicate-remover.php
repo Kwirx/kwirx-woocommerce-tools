@@ -28,6 +28,7 @@ class Kwirx_Image_Duplicate_Remover {
 
             $batch_size = 10;
             $offset = isset($_POST['offset']) ? absint($_POST['offset']) : 0;
+            $delete_media_files = isset($_POST['delete_media_files']) ? (bool)$_POST['delete_media_files'] : false;
 
             // Calculate total number of products
             $total_products = wp_count_posts('product')->publish;
@@ -45,7 +46,7 @@ class Kwirx_Image_Duplicate_Remover {
             $updated_products = array();
 
             foreach ($products as $product) {
-                $removed = $this->process_product_images($product->ID);
+                $removed = $this->process_product_images($product->ID, $delete_media_files);
                 if ($removed > 0) {
                     $updated_products[] = array(
                         'name' => $product->post_title,
@@ -75,7 +76,7 @@ class Kwirx_Image_Duplicate_Remover {
         }
     }
 
-    private function process_product_images($product_id) {
+    private function process_product_images($product_id, $delete_media_files) {
         $product = wc_get_product($product_id);
         $image_ids = $product->get_gallery_image_ids();
         array_unshift($image_ids, $product->get_image_id());
@@ -102,7 +103,7 @@ class Kwirx_Image_Duplicate_Remover {
             } else {
                 if ($unique_images[$clean_name]['time'] < get_post_time('U', true, $image_id)) {
                     // Remove the older image
-                    wp_delete_attachment($unique_images[$clean_name]['id'], true);
+                    $this->remove_image($unique_images[$clean_name]['id'], $delete_media_files);
                     $unique_images[$clean_name] = array(
                         'id' => $image_id,
                         'url' => $image_url,
@@ -110,7 +111,7 @@ class Kwirx_Image_Duplicate_Remover {
                     );
                 } else {
                     // Remove the current image
-                    wp_delete_attachment($image_id, true);
+                    $this->remove_image($image_id, $delete_media_files);
                 }
                 $removed++;
             }
@@ -123,5 +124,42 @@ class Kwirx_Image_Duplicate_Remover {
         $product->save();
 
         return $removed;
+    }
+
+    private function remove_image($image_id, $delete_media_files) {
+        if ($delete_media_files) {
+            // Check if the image is linked to any other post
+            $posts = get_posts(array(
+                'post_type' => 'any',
+                'post_status' => 'any',
+                'fields' => 'ids',
+                'meta_query' => array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => '_thumbnail_id',
+                        'value' => $image_id,
+                        'compare' => '='
+                    ),
+                    array(
+                        'key' => '_product_image_gallery',
+                        'value' => $image_id,
+                        'compare' => 'LIKE'
+                    )
+                )
+            ));
+
+            // If the image is not linked to any other post, delete it completely
+            if (empty($posts)) {
+                wp_delete_attachment($image_id, true);
+            } else {
+                // If the image is linked to other posts, just remove it from the current product
+                delete_post_meta(get_post($image_id)->post_parent, '_thumbnail_id', $image_id);
+                delete_post_meta(get_post($image_id)->post_parent, '_product_image_gallery', $image_id);
+            }
+        } else {
+            // If not deleting media files, just remove it from the current product
+            delete_post_meta(get_post($image_id)->post_parent, '_thumbnail_id', $image_id);
+            delete_post_meta(get_post($image_id)->post_parent, '_product_image_gallery', $image_id);
+        }
     }
 }

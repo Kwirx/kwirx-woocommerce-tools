@@ -14,6 +14,12 @@ $kwirx_remove_duplicate_images_nonce = wp_create_nonce('kwirx_remove_duplicate_i
         <li>Update the product with the cleaned image gallery.</li>
     </ol>
     <p><strong>Warning:</strong> This process will permanently delete duplicate images. Please make sure you have a backup before proceeding.</p>
+    <p>
+        <label for="delete-media-files">
+            <input type="checkbox" id="delete-media-files" name="delete-media-files">
+            Delete media files from WordPress if not linked to any other post
+        </label>
+    </p>
     <button id="start-duplicate-removal" class="button button-primary">Remove Duplicate Images</button>
     <button id="pause-duplicate-removal" class="button" style="display: none;">Pause</button>
     <button id="cancel-duplicate-removal" class="button" style="display: none;">Cancel</button>
@@ -78,7 +84,8 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'kwirx_remove_duplicate_images',
                 security: '<?php echo $kwirx_remove_duplicate_images_nonce; ?>',
-                offset: offset
+                offset: offset,
+                delete_media_files: $('#delete-media-files').is(':checked')
             },
             success: function(response) {
                 if (response.success) {

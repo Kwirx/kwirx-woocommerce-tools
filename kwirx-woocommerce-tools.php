@@ -3,7 +3,7 @@
  * Plugin Name: Kwirx WooCommerce Tools
  * Plugin URI: https://kwirx.com
  * Description: A comprehensive toolkit for WooCommerce store management.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Kwirx Creative
  * Author URI: https://kwirx.com
  * Text Domain: kwirx-woocommerce-tools

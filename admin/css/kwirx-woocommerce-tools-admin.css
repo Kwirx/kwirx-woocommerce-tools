@@ -1,0 +1,32 @@
+.wrap {
+    margin: 20px auto;
+}
+
+.nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+.tab-content {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+#progress-bar {
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 3px;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
+}
+
+#progress {
+    border-radius: 3px;
+    transition: width 0.3s ease-in-out;
+}
+
+#progress-text {
+    margin-top: 10px;
+    font-weight: bold;
+}
